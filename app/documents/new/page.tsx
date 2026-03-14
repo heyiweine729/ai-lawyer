@@ -98,44 +98,43 @@ export default function NewDocumentPage() {
   const handleExportWord = async () => {
     if (!content) return;
     try {
-      const { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel } = await import('docx');
-      const fileSaver = await import('file-saver');
-      const saveAs = fileSaver.default || fileSaver.saveAs;
+      const docxModule = await import('docx');
+      const { Document, Packer, Paragraph, TextRun, AlignmentType } = docxModule;
 
       // 将文本按行解析为段落
       const lines = content.split('\n');
-      const paragraphs: any[] = [];
+      const children: InstanceType<typeof Paragraph>[] = [];
 
       for (const line of lines) {
         const trimmed = line.trim();
         if (!trimmed) {
-          paragraphs.push(new Paragraph({ text: '' }));
+          children.push(new Paragraph({ text: '' }));
           continue;
         }
 
-        // 检测标题行（如"民事起诉状"、一、二、三等开头）
+        // 检测标题行
         const isCenterTitle = /^(民事|刑事|行政)?(起诉状|答辩状|上诉状|律师函|法律意见书|合同审查报告)/.test(trimmed);
         const isSectionTitle = /^[一二三四五六七八九十]+[、.]/.test(trimmed);
 
         if (isCenterTitle) {
-          paragraphs.push(
+          children.push(
             new Paragraph({
-              children: [new TextRun({ text: trimmed, bold: true, size: 36, font: '方正小标宋简体' })],
+              children: [new TextRun({ text: trimmed, bold: true, size: 36 })],
               alignment: AlignmentType.CENTER,
               spacing: { after: 400, before: 400 },
             })
           );
         } else if (isSectionTitle) {
-          paragraphs.push(
+          children.push(
             new Paragraph({
-              children: [new TextRun({ text: trimmed, bold: true, size: 24, font: '黑体' })],
+              children: [new TextRun({ text: trimmed, bold: true, size: 24 })],
               spacing: { before: 200, after: 100 },
             })
           );
         } else {
-          paragraphs.push(
+          children.push(
             new Paragraph({
-              children: [new TextRun({ text: trimmed, size: 24, font: '仿宋' })],
+              children: [new TextRun({ text: trimmed, size: 24 })],
               spacing: { line: 360 },
               indent: { firstLine: 480 },
             })
@@ -150,15 +149,34 @@ export default function NewDocumentPage() {
               margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 },
             },
           },
-          children: paragraphs,
+          children,
         }],
       });
 
       const blob = await Packer.toBlob(doc);
-      saveAs(blob, `${typeInfo.label}_${new Date().toLocaleDateString('zh-CN')}.docx`);
+      const fileName = `${typeInfo.label}_${new Date().toISOString().slice(0, 10)}.docx`;
+
+      // 使用原生方式下载，不依赖 file-saver
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     } catch (err) {
       console.error('导出失败:', err);
-      alert('导出失败，请重试');
+      // 降级方案：导出为纯文本
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${typeInfo.label}_${new Date().toISOString().slice(0, 10)}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
   };
 

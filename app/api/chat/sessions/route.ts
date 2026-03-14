@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import { getChatSessions, createChatSession } from '@/lib/actions';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const sessions = await getChatSessions();

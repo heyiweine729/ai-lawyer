@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import { getCases, createCase } from '@/lib/actions';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/cases - 获取案件列表
 export async function GET(req: NextRequest) {
   const search = req.nextUrl.searchParams.get('search') || undefined;

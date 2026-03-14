@@ -114,9 +114,19 @@ export async function updateCase(
   return prisma.case.update({ where: { id }, data });
 }
 
-// 删除案件
+// 删除案件（先删除关联数据）
 export async function deleteCase(id: string) {
-  return prisma.case.delete({ where: { id } });
+  return prisma.$transaction(async (tx) => {
+    await tx.party.deleteMany({ where: { caseId: id } });
+    await tx.evidence.deleteMany({ where: { caseId: id } });
+    await tx.timelineEvent.deleteMany({ where: { caseId: id } });
+    await tx.message.deleteMany({
+      where: { session: { caseId: id } },
+    });
+    await tx.chatSession.deleteMany({ where: { caseId: id } });
+    await tx.document.deleteMany({ where: { caseId: id } });
+    return tx.case.delete({ where: { id } });
+  });
 }
 
 // ============================================

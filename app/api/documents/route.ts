@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import { getDocuments, createDocument } from '@/lib/actions';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   const caseId = req.nextUrl.searchParams.get('caseId') || undefined;
   try {
