@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { DOC_TYPE_MAP } from '@/types';
 import type { DocumentType } from '@/types';
 
+export const dynamic = 'force-dynamic';
 export default function NewDocumentPage() {
   const searchParams = useSearchParams();
   const docType = (searchParams.get('type') || 'complaint') as DocumentType;
