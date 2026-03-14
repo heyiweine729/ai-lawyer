@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Loader2, Download, Save, ArrowLeft, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 import { DOC_TYPE_MAP } from '@/types';
 import type { DocumentType } from '@/types';
 
-export const dynamic = 'force-dynamic';
-export default function NewDocumentPage() {
+function NewDocumentPage()  {
   const searchParams = useSearchParams();
   const docType = (searchParams.get('type') || 'complaint') as DocumentType;
   const typeInfo = DOC_TYPE_MAP[docType];
@@ -321,5 +320,12 @@ export default function NewDocumentPage() {
         </div>
       </div>
     </div>
+  );
+}
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="py-20 text-center text-sm" style={{ color: 'var(--text-tertiary)' }}>加载中...</div>}>
+      <NewDocumentPage />
+    </Suspense>
   );
 }
