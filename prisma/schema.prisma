@@ -1,0 +1,107 @@
+// ============================================
+// AI 律师助手 - 数据库模型
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 案件
+model Case {
+  id          String   @id @default(cuid())
+  name        String                         // 案件名称
+  caseNumber  String?                        // 案号
+  caseType    String                         // 案件类型：合同纠纷、劳动争议...
+  status      String   @default("draft")     // draft|preparing|trial|closed
+  description String?                        // 案情摘要
+  amount      Float?                         // 标的金额
+  court       String?                        // 管辖法院
+  judge       String?                        // 主审法官
+  filingDate  DateTime?                      // 立案日期
+  trialDate   DateTime?                      // 开庭日期
+  closedDate  DateTime?                      // 结案日期
+  aiAnalysis  String?                        // AI 分析结果（JSON）
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parties     Party[]                        // 当事人
+  documents   Document[]                     // 相关文书
+  chatSessions ChatSession[]                 // AI 对话
+  evidence    Evidence[]                     // 证据材料
+  timeline    TimelineEvent[]                // 时间线
+}
+
+// 当事人
+model Party {
+  id       String @id @default(cuid())
+  name     String                           // 姓名
+  role     String                           // plaintiff|defendant|third_party
+  idNumber String?                          // 身份证号
+  phone    String?                          // 联系电话
+  address  String?                          // 地址
+  lawyer   String?                          // 代理律师
+  caseId   String
+  case     Case   @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
+
+// 证据材料
+model Evidence {
+  id          String @id @default(cuid())
+  name        String                        // 证据名称
+  type        String                        // contract|recording|photo|chat|other
+  description String?                       // 证据说明
+  filePath    String?                       // 文件路径
+  content     String?                       // 文本内容（如录音转写）
+  caseId      String
+  case        Case   @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+// 时间线事件
+model TimelineEvent {
+  id          String   @id @default(cuid())
+  date        DateTime
+  title       String
+  description String?
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
+
+// AI 对话会话
+model ChatSession {
+  id        String    @id @default(cuid())
+  title     String
+  caseId    String?                         // 可选关联案件
+  case      Case?     @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// 对话消息
+model Message {
+  id        String      @id @default(cuid())
+  role      String                          // user|assistant|system
+  content   String
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+}
+
+// 法律文书
+model Document {
+  id          String   @id @default(cuid())
+  title       String                        // 文书标题
+  type        String                        // complaint|defense|lawyer_letter|opinion|contract_review|appeal
+  content     String?                       // 文书正文（HTML）
+  status      String   @default("draft")    // draft|final
+  caseId      String?                       // 可选关联案件
+  case        Case?    @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   AI 律师助手 — 设计系统
+   风格：专业沉稳 + 现代极简
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* 主色调：深邃墨蓝 */
+  --brand-50: #EEF4FF;
+  --brand-100: #D9E6FF;
+  --brand-200: #BBCFFF;
+  --brand-400: #5580FF;
+  --brand-500: #2952CC;
+  --brand-600: #1E3FA3;
+  --brand-700: #163080;
+  --brand-800: #0F2260;
+  --brand-900: #0A1740;
+
+  /* 表面层次 */
+  --surface-primary: #FFFFFF;
+  --surface-secondary: #F7F8FA;
+  --surface-tertiary: #F0F1F5;
+
+  /* 文字 */
+  --text-primary: #1A1D26;
+  --text-secondary: #5C6070;
+  --text-tertiary: #9498A8;
+
+  /* 边框 */
+  --border-light: #E8EAF0;
+  --border-default: #D1D4DC;
+
+  /* 语义色 */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --info: #3B82F6;
+
+  /* 间距 */
+  --sidebar-width: 240px;
+  --header-height: 56px;
+}
+
+/* 暗色模式 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-primary: #141620;
+    --surface-secondary: #1C1E2E;
+    --surface-tertiary: #252838;
+    --text-primary: #E8EAF0;
+    --text-secondary: #9498A8;
+    --text-tertiary: #5C6070;
+    --border-light: #2A2D3E;
+    --border-default: #363950;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--surface-tertiary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================
+   组件样式
+   ============================================ */
+
+/* 卡片 */
+.card {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 20px;
+  transition: box-shadow 0.2s ease;
+}
+.card:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* 状态标签 */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.8;
+}
+.status-badge.gray    { background: #F0F1F5; color: #5C6070; }
+.status-badge.blue    { background: #EEF4FF; color: #2952CC; }
+.status-badge.amber   { background: #FFF8EB; color: #B45309; }
+.status-badge.green   { background: #ECFDF5; color: #059669; }
+
+/* 按钮 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid var(--border-default);
+  background: var(--surface-primary);
+  color: var(--text-primary);
+}
+.btn:hover {
+  background: var(--surface-secondary);
+}
+.btn:active {
+  transform: scale(0.98);
+}
+.btn-primary {
+  background: var(--brand-500);
+  color: white;
+  border-color: var(--brand-600);
+}
+.btn-primary:hover {
+  background: var(--brand-600);
+}
+.btn-sm {
+  padding: 4px 12px;
+  font-size: 13px;
+}
+.btn-ghost {
+  border-color: transparent;
+  background: transparent;
+}
+.btn-ghost:hover {
+  background: var(--surface-secondary);
+}
+
+/* 输入框 */
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--surface-primary);
+  color: var(--text-primary);
+  transition: border-color 0.15s ease;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--brand-400);
+  box-shadow: 0 0 0 3px rgba(85, 128, 255, 0.12);
+}
+.input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* 文本域 */
+textarea.input {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.6;
+}
+
+/* 选择框 */
+select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239498A8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 3px;
+}
+
+/* AI 消息气泡动画 */
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.message-in {
+  animation: messageIn 0.3s ease-out;
+}
+
+/* 流式打字效果 */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.typing-cursor::after {
+  content: '▋';
+  animation: blink 0.8s infinite;
+  color: var(--brand-400);
+}
